@@ -50,6 +50,13 @@ if box_sections == 'Exploratory Data Analysis':
 if box_sections == 'Plots':
        st.header('Main plots')
        '''
+       In the dataset we encountered a lot of null values
+       '''
+       st.image('images\inull_val.png')
+       '''
+       After cleaning our dataset, we ended up with 0 null values accross all variables.
+       '''
+       '''
        It's important that our cleaning of the dataset didn't impact too much the distributions of our variables. 
        If that was the case, we might encounter some problems in the model part of the project.
        '''
@@ -60,7 +67,7 @@ if box_sections == 'Plots':
                                                                            'Manganese', 'Total_Diss_Solids'], 
                                                                             label_visibility = 'collapsed')
        if box_distr_features == 'None':
-              pass
+              st.image('images\distr\iNone.png')
        if box_distr_features == 'pH':
               st.image('images\distr\pH.png')
        if box_distr_features == 'Iron':
@@ -102,7 +109,7 @@ if box_sections == 'Plots':
                                                        'Color','Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 
                                                        'Conductivity', 'Chlorine', 'Manganese', 'Total_Diss_Solids'], label_visibility = 'collapsed')
        if box_boxplot_features == 'None':
-              pass
+              st.image('images\iboxplot\iNone.png')
        if box_boxplot_features == 'pH':
               st.image('images\iboxplot\pH.png')
        if box_boxplot_features == 'Iron':
