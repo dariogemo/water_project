@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
 
-def outl_del(df, column, quantile):
+def outl_del(df, column, quantile_h, quantile_l = 0):
     '''
     function for deleting outliers
     '''
-    outl_high = df[column].quantile(quantile)
-    mask = df[column] < outl_high
+    outl_high = df[column].quantile(quantile_h)
+    out_low = df[column].quantile(quantile_l)
+    mask = (df[column] < outl_high) & (df[column] > out_low)
     df = df[mask]
     return df 
     

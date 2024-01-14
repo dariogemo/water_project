@@ -10,12 +10,16 @@ if box_sections == 'Description':
        st.write('prova')
 
 if box_sections == 'Exploratory Data Analysis':
-       import clean_df as clean
        import io
        st.header('Exploratory Data Analysis')
        if st.checkbox('Before Cleaning'):
-              df = pl.read_csv('csv\Water Quality Prediction.csv')
+              df = pl.read_csv('csv\Water_Quality_Prediction.csv')
               df = pd.DataFrame(df)
+              df.columns = ['Index', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Lead', 'Zinc', 'Color',
+                            'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
+                            'Chlorine', 'Manganese', 'Total Dissolved Solids', 'Source',
+                            'Water Temperature', 'Air Temperature', 'Month', 'Day', 'Time of Day',
+                            'Target']
               st.write(df.head(5))
               '''
               General informations for our water quality dataset:
@@ -27,8 +31,11 @@ if box_sections == 'Exploratory Data Analysis':
               s = buffer.getvalue()
               st.text(s)
        if st.checkbox('After Cleaning'):
-              df = pl.read_csv('csv\Water Quality Prediction Clean.csv')
+              df = pl.read_csv('csv\Water_Quality_Prediction_Clean.csv')
               df = pd.DataFrame(df)
+              df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Lead', 'Zinc', 'Color',
+                            'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
+                            'Chlorine', 'Manganese', 'Total_Diss_Solids', 'Potability']
               st.write(df.head(5))
               '''
               General informations for our water quality dataset:
