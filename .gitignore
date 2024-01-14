@@ -1,0 +1,5 @@
+Water Quality Prediction.csv
+__pycache__/funzioni.cpython-311.pyc
+models/potability_classifier_log.pkl
+models/potability_classifier_svm.pkl
+__pycache__/clean_df.cpython-311.pyc
