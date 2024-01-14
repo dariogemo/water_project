@@ -57,6 +57,10 @@ if box_sections == 'Plots':
        After cleaning our dataset, we ended up with 0 null values accross all variables.
        '''
        '''
+       The correlation between variables can be seen from the following heatmap:
+       '''
+       st.image('images\heatmap.png')
+       '''
        It's important that our cleaning of the dataset didn't impact too much the distributions of our variables. 
        If that was the case, we might encounter some problems in the model part of the project.
        '''
@@ -100,11 +104,6 @@ if box_sections == 'Plots':
               st.image('images\distr\Total_Diss_Solids.png')
        if box_distr_features == 'Lead':
               st.image('images\distr\Lead.png')
-       '''
-       The correlation between variables can be seen from the following heatmap:
-       '''
-       box_heatmap_features = st.select_slider
-       st.image('images\heatmap.png')
        box_boxplot_features = st.selectbox('Feature', ['None', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Lead', 'Zinc', 
                                                        'Color','Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 
                                                        'Conductivity', 'Chlorine', 'Manganese', 'Total_Diss_Solids'], label_visibility = 'collapsed')
@@ -142,4 +141,40 @@ if box_sections == 'Plots':
               st.image('images\iboxplot\Manganese.png')
        if box_boxplot_features == 'Total_Diss_Solids':
               st.image('images\iboxplot\Total_Diss_Solids.png')
-       
+       box_violinplot_features = st.selectbox('Feature violinplot', ['None', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Lead', 'Zinc', 
+                                                       'Color','Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 
+                                                       'Conductivity', 'Chlorine', 'Manganese', 'Total_Diss_Solids'], label_visibility = 'collapsed')
+       if box_violinplot_features == 'None':
+              st.image('images\iviolinplot\iNone.png')
+       if box_violinplot_features == 'pH':
+              st.image('images\iviolinplot\pH.png')
+       if box_violinplot_features == 'Iron':
+              st.image('images\iviolinplot\Iron.png')
+       if box_violinplot_features == 'Nitrate':
+              st.image('images\iviolinplot\iNitrate.png')
+       if box_violinplot_features == 'Chloride':
+              st.image('images\iviolinplot\Chloride.png')
+       if box_violinplot_features == 'Lead':
+              st.image('images\iviolinplot\Lead.png')
+       if box_violinplot_features == 'Zinc':
+              st.image('images\iviolinplot\Zinc.png')
+       if box_violinplot_features == 'Color':
+              st.image('images\iviolinplot\Color.png')
+       if box_violinplot_features == 'Turbidity':
+              st.image('images\iviolinplot\Turbidity.png')
+       if box_violinplot_features == 'Fluoride':
+              st.image('images\iviolinplot\Fluoride.png')
+       if box_violinplot_features == 'Copper':
+              st.image('images\iviolinplot\Copper.png')
+       if box_violinplot_features == 'Odor':
+              st.image('images\iviolinplot\Odor.png')
+       if box_violinplot_features == 'Sulfate':
+              st.image('images\iviolinplot\Sulfate.png')
+       if box_violinplot_features == 'Conductivity':
+              st.image('images\iviolinplot\Conductivity.png')
+       if box_violinplot_features == 'Chlorine':
+              st.image('images\iviolinplot\Chlorine.png')
+       if box_violinplot_features == 'Manganese':
+              st.image('images\iviolinplot\Manganese.png')
+       if box_violinplot_features == 'Total_Diss_Solids':
+              st.image('images\iviolinplot\Total_Diss_Solids.png')    
