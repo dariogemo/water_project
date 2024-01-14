@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 def outl_del(df, column, quantile_h, quantile_l = 0):
     '''
