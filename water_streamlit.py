@@ -4,9 +4,9 @@ import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt 
 
-st.title('Water quality detection project')
+st.title('Water Quality Detection Project')
 
-box_sections = st.selectbox('Choose what you want to see of the project', ['Description', 'Exploratory Data Analysis', 'Plots', 'Model'])
+box_sections = st.selectbox('Choose the part of the project you would like to see', ['Description', 'Exploratory Data Analysis', 'Plots', 'Model'])
 
 if box_sections == 'Description':
        st.write('The full code for this project can be found at ')
