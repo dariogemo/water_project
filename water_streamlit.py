@@ -3,12 +3,16 @@ import polars as pl
 import streamlit as st 
 import seaborn as sns
 import matplotlib.pyplot as plt 
+st.set_page_config(layout = 'centered')
 
 st.title('Water Quality Detection Project')
 
-box_sections = st.selectbox('Choose the part of the project you would like to see', ['Description', 'Exploratory Data Analysis', 'Plots', 'Model'])
+box_sections = st.selectbox('What part of the project would you like to see?', ['Description', 'Exploratory Data Analysis', 'Plots', 'Model'])
 
 if box_sections == 'Description':
+       st.write('The Water Quality Prediction dataset can be found at:')
+       st.link_button('Kaggle', 'https://www.kaggle.com/datasets/vanthanadevi08/water-quality-prediction')
+       st.write('or in the GitHub repository for this project.')
        st.write('The full code for this project can be found at ')
        st.link_button('Github', 'https://github.com/dariogemo/water_project')
 
