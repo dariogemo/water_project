@@ -1,9 +1,9 @@
 import pandas as pd
 import polars as pl
 import streamlit as st 
-import seaborn as sns
-import matplotlib.pyplot as plt 
-st.set_page_config(layout = 'centered')
+import pickle
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
 
 st.title('Water Quality Detection Project')
 
@@ -186,4 +186,24 @@ if box_sections == 'Plots':
               if box_violinplot_features == 'Manganese':
                      st.image('images\iviolinplot\Manganese.png')
               if box_violinplot_features == 'Total_Diss_Solids':
-                     st.image('images\iviolinplot\Total_Diss_Solids.png')    
+                     st.image('images\iviolinplot\Total_Diss_Solids.png')
+if box_sections == 'Model':
+       with open('models\potability_classifier_svm.pkl', 'rb') as file:
+              svm_model = pickle.load(file)
+       t_size = st.slider('Choose test size', 10, 90, step = 10)
+       df = pl.read_csv('csv\Water_Quality_Prediction_Balanced.csv')
+       df = pd.DataFrame(df)
+       df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 'Color',
+                            'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
+                            'Chlorine', 'Manganese', 'Total_Diss_Solids', 'Potability']
+       X = df.drop('Potability', axis = 1)
+       y = df['Potability']
+       X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = t_size, random_state = 1)
+       y_pred_svm = svm_model.predict(X_test)
+       f1_score_svm = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
+       st.write(f'F1 score for the SVM model applied to the dataset: {f1_score_svm[0] * 100:.2f}%, {f1_score_svm[1] * 100:.2f}%')
+       with open('models\potability_classifier_log.pkl', 'rb') as file:
+              log_model = pickle.load(file)
+       y_pred_log = log_model.predict(X_test)
+       f1_score_log = f1_score(y_test, y_pred_log, average = None, labels = [0, 1])
+       st.write(f'F1 score for the Log. Regression model applied to the dataset: {f1_score_log[0] * 100:.2f}%, {f1_score_log[1] * 100:.2f}%')
