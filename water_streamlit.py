@@ -3,10 +3,9 @@ import polars as pl
 import streamlit as st 
 import pickle
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score
 
 st.title('Water Quality Detection Project')
-
 
 box_sections = st.selectbox('What part of the project would you like to see?', ['Description', 'Exploratory Data Analysis', 'Plots', 'Model'])
 
@@ -52,10 +51,11 @@ if box_sections == 'Exploratory Data Analysis':
               st.write(df.head(5))
               st.write(df.tail(5))
               '''
-              General informations for our water quality dataset:
+              **General informations for our water quality dataset:**
               '''
-              st.write('Rows and columns:', df.shape)
-              st.write('Total null values:', df.isnull().sum().sum())
+              col1, col2 = st.columns(2)
+              col1.write(f'Rows and columns: {df.shape}')
+              col2.write(f'Total null values: {df.isnull().sum().sum()}')
               buffer = io.StringIO()
               df.info(buf = buffer)
               s = buffer.getvalue()
@@ -69,10 +69,11 @@ if box_sections == 'Exploratory Data Analysis':
               st.write(df.head(5))
               st.write(df.tail(5))
               '''
-              General informations for our water quality dataset:
+              **General informations for our water quality dataset, cleaned:**
               '''
-              st.write('Rows and columns:', df.shape)
-              st.write('Total null values:', df.isnull().sum().sum())
+              col1, col2 = st.columns(2)
+              col1.write(f'Rows and columns: {df.shape}')
+              col2.write(f'Total null values: {df.isnull().sum().sum()}')
               buffer = io.StringIO()
               df.info(buf = buffer)
               s = buffer.getvalue()
@@ -92,10 +93,21 @@ if box_sections == 'Plots':
        '''
        st.image('images\heatmap.png')
        '''
+       No big correlations between variables, so we'll keep them all.\n 
+       It seems that Color and Turbidity have one of the highest correlation with Potability: this was somewhat expected, because even in our daily life we are suspicious of water that isn't transparent or seems turbid. We can better check the relation between Color and Potability.
+       '''
+       if st.checkbox('Show frequency table of Color and Potability'):
+              st.image('images\Color-Potability.png')
+       '''
        Another "relevant" correlation might be between Manganese and Turbidity. Potable water usually has very low levels of Manganese and Turbidity levels between 0 and 1.
        '''
        if st.checkbox('Show scatterplot between Manganese and Turbidity'):
               st.image('images\Manganese-Turbidity.png')
+       '''
+       Also, it might be important to check the correlation between Color and Turbidity since in theory they should have some type of relation.
+       '''
+       if st.checkbox('Show boxplot of Color and Turbidity'):
+              st.image('images\Color-Turbidity.png')
        '''
        It's important that our cleaning of the dataset didn't impact too much our variables. 
        If that was the case, we might encounter some lower performances in the model part of the project.
@@ -217,7 +229,7 @@ if box_sections == 'Plots':
 if box_sections == 'Model':
        with open('models\potability_classifier_svm.pkl', 'rb') as file:
               svm_model = pickle.load(file)
-       t_size = st.slider('Choose test size', 10, 90, step = 10)
+       t_size = st.slider('Choose test size', 10, 100, step = 10)
        df = pl.read_csv('csv\Water_Quality_Prediction_Balanced.csv')
        df = pd.DataFrame(df)
        df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 'Color',
@@ -226,11 +238,55 @@ if box_sections == 'Model':
        X = df.drop('Potability', axis = 1)
        y = df['Potability']
        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = t_size, random_state = 1)
-       y_pred_svm = svm_model.predict(X_test)
-       f1_score_svm = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
-       st.write(f'F1 score for the SVM model applied to the dataset: {f1_score_svm[0] * 100:.2f}%, {f1_score_svm[1] * 100:.2f}%')
        with open('models\potability_classifier_log.pkl', 'rb') as file:
               log_model = pickle.load(file)
        y_pred_log = log_model.predict(X_test)
        f1_score_log = f1_score(y_test, y_pred_log, average = None, labels = [0, 1])
-       st.write(f'F1 score for the Log. Regression model applied to the dataset: {f1_score_log[0] * 100:.2f}%, {f1_score_log[1] * 100:.2f}%')
+       accuracy_svm = accuracy_score(y_test, y_pred_log)
+       st.write(f'F1 score for the Log. Regression model applied to the dataset with a test size of {t_size}%: {f1_score_log[0] * 100:.2f}%, {f1_score_log[1] * 100:.2f}%')
+       st.write(f'Accuracy for the Log. Regression model applied to the dataset with a test size of {t_size}%: {accuracy_svm * 100:.2f}%')
+       y_pred_svm = svm_model.predict(X_test)
+       f1_score_svm = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
+       accuracy_svm = accuracy_score(y_test, y_pred_svm)
+       st.write(f'F1 score for the SVM model applied to the dataset with a test size of {t_size}%: {f1_score_svm[0] * 100:.2f}%, {f1_score_svm[1] * 100:.2f}%')
+       st.write(f'Accuracy for the SVM model applied to the dataset with a test size of {t_size}%: {accuracy_svm * 100:.2f}%')
+       if t_size == 10:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-01.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-01.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 20:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-02.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-02.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 30:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-03.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-03.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 40:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-04.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-04.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 50:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-05.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-05.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 60:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-06.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-06.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 70:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-07.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-07.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 80:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-08.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-08.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 90:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-09.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-09.png', caption = 'Accuracy score for the Logistic Regression model')
+       if t_size == 100:
+              col1, col2 = st.columns(2)
+              col1.image('images\s_acc\svm-1.png', caption = 'Accuracy score for the SVM model')
+              col2.image('images\s_acc\log-1.png', caption = 'Accuracy score for the Logistic Regression model')
