@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-def outl_del(df, column, quantile_h, quantile_l = 0):
+def outl_del(df, column, quantile_h, quantile_l = 0)  -> int:
     '''
     function for deleting outliers
     '''
@@ -11,14 +11,14 @@ def outl_del(df, column, quantile_h, quantile_l = 0):
     mask = (df[column] < outl_high) & (df[column] > out_low)
     df = df[mask]
     return df 
-    
-def median_col_in_target(df, column):
+
+def median_col_in_target(df, column) -> int:
     '''
     function for median in target 0 and 1
     '''
     x = df[df['Potability'] == 0][column].median()
     y = df[df['Potability'] == 1][column].median()
-    return print('Median for target 0:', x, '\nMedian for target 1:', y)
+    return x, y
 
 def na_to_median_target(df, column):
     '''

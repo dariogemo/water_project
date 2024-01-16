@@ -70,6 +70,11 @@ if box_sections == 'Plots':
        '''
        st.image('images\heatmap.png')
        '''
+       Another "relevant" correlation might be between Manganese and Turbidity. Potable water usually has very low levels of Manganese and Turbidity levels between 0 and 1.
+       '''
+       if st.checkbox('Show scatterplot between Manganese and Turbidity'):
+              st.image('images\Manganese-Turbidity.png')
+       '''
        It's important that our cleaning of the dataset didn't impact too much our variables. 
        If that was the case, we might encounter some lower performances in the model part of the project.
        '''
