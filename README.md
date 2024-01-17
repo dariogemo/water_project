@@ -1,5 +1,23 @@
 # Water Potability Prediction
 
+My main goal for this project is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
+
+**Details of the files in the repository:**
+
+- *csv:* all the csv files that are needed for the streamlit presentation, as well as the Water Quality Prediction starting csv file.
+
+- *images:* all the images that are needed for the streamlit presentation. For computational reasons, I found it better to store the plots inside here instead of re-creating them in the streamlit file.
+
+- *models:* the Logistic Regression and SVM models resulting from this project, stored in .pkl files.
+
+- *clean_df.py:* 
+
+- *funzioni.py:* all the functions defined for the data cleaning of the dataset.
+
+- *water_project.ipynb:* the notebook used for this project, where is stored almost all the code.
+
+. *water_streamlit.py:* the python file used for the streamlit presentation.
+
 **Details of the dataset features:**
 
 1) *pH -* Measures how acidic or basic our sample is. More specifically, it indicates the concentration of hydrogen ions in the water. Unintuitively, an high pH means a higher concentration of hydrogen, a low pH means a lower concentratio. Its scale is between 0 and 14, and a neutral pH of 7 means that is neither acidic or basic.
@@ -33,8 +51,5 @@
 15) *Total Dissolved Solids -* Represents the total concentration of dissolved substances in water samples. A high concentration of dissolved solids is usually not a health hazard, and its level in water is often correlated with how strong the taste is.
 
 16) *Potability -* Indicates if the water of a specific sample is potable or not. 0 means potable, 1 means non-potable.
-
-       
-My main goal for this project is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
 
 The Water Quality Prediction dataset can be found in [Kaggle](https://www.kaggle.com/datasets/vanthanadevi08/water-quality-prediction) or in the [Github](https://github.com/dariogemo/water_project) repository for this project, where you can also find the full code.

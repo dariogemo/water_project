@@ -12,7 +12,13 @@ box_sections = st.selectbox('What part of the project would you like to see?', [
 
 if box_sections == 'Description':
        '''
-       **Details of the dataset features:**\n
+       My main goal for this project is to build a prediction model, as accurate as possible, that classifies if a given water sample is potable based on the 15 variables provided.\n
+       From the drop-down menu on the top of this page, you can select what part of the project you're interested in.\n
+       **Exploratory Data Analysis:** gives insights on the general structure of the dataset, and it's divided between "Before Cleaning" and "After Cleaning".\n
+       **Plots:** in here are stored the main plots that can help us have a better understanding of the relations between variables and their relative distributions.\n
+       **Prediction Model:** stored in this page is an interesting visualization of the variables after dimensionality reduction thanks to PCA, and then a slider where you can select the test size for two different ML classification models (Logistic Regression and SVM's) with their relative accuracy scores.\n
+       
+       **Details of the dataset variables:**\n
        1) *pH -* Measures how acidic or basic our sample is. More specifically, it indicates the concentration of hydrogen ions in the water. Unintuitively, an high pH means a higher concentration of hydrogen, a low pH means a lower concentratio. Its scale is between 0 and 14, and a neutral pH of 7 means that is neither acidic or basic.\n
        2) *Iron -* One of the most plentiful resources on earth, can enter underground water sources through rainwater. Iron is not hazardous to healt, but it can be a problem for the house pipe system if it's concentration is too high.\n
        3) *Nitrate -* A compound that naturally occurs in water, consuming too much of it can be harmful (especially for babies). Mainly, consuming too much nitrate can affect how blood carries hoxygen, and also have negative effects on heart rate, nausea, headaches and abdominal cramps.\n
@@ -30,7 +36,6 @@ if box_sections == 'Description':
        15) *Total Dissolved Solids -* Represents the total concentration of dissolved substances in water samples. A high concentration of dissolved solids is usually not a health hazard, and its level in water is often correlated with how strong the taste is.\n
        16) *Potability -* Indicates if the water of a specific sample is potable or not. 0 means potable, 1 means non-potable.\n\n
        
-       My main goal for this project is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
        '''
        st.write('The Water Quality Prediction dataset can be found on:')
        st.link_button('Kaggle', 'https://www.kaggle.com/datasets/vanthanadevi08/water-quality-prediction')
@@ -237,6 +242,9 @@ if box_sections == 'Prediction Model':
        We can now visualize our data thanks to the PCA. Two quite distinct clusters are visible. 
        '''
        st.image('images\pca.png')
+       '''
+       ---
+       '''
        with open('models\potability_classifier_svm.pkl', 'rb') as file:
               svm_model = pickle.load(file)
        t_size = st.slider('Choose test size', 10, 100, step = 10)
