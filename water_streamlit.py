@@ -8,7 +8,7 @@ from sklearn.metrics import f1_score, accuracy_score
 
 st.title('Water Quality Detection Project')
 
-box_sections = st.selectbox('What part of the project would you like to see?', ['Description', 'Exploratory Data Analysis', 'Plots', 'Model'])
+box_sections = st.selectbox('What part of the project would you like to see?', ['Description', 'Exploratory Data Analysis', 'Plots', 'Prediction Model'])
 
 if box_sections == 'Description':
        '''
@@ -227,7 +227,16 @@ if box_sections == 'Plots':
                      st.image('images\iviolinplot\Manganese.png')
               if box_violinplot_features == 'Total_Diss_Solids':
                      st.image('images\iviolinplot\Total_Diss_Solids.png')
-if box_sections == 'Model':
+if box_sections == 'Prediction Model':
+       '''
+       We can first look for clusters that are not evident with our high-dimensional data. We'll use Principal Component Analsisys to reduce the dimensionality of our dataset.\n
+       As we can see from the Scree Plot, 2 Principal Components should be enough.
+       '''
+       st.image('images\scree.png')
+       '''
+       We can now visualize our data thanks to the PCA. Two quite distinct clusters are visible. 
+       '''
+       st.image('images\pca.png')
        with open('models\potability_classifier_svm.pkl', 'rb') as file:
               svm_model = pickle.load(file)
        t_size = st.slider('Choose test size', 10, 100, step = 10)
@@ -247,13 +256,13 @@ if box_sections == 'Model':
        y_pred_log = log_model.predict(X_test)
        f1_score_log = f1_score(y_test, y_pred_log, average = None, labels = [0, 1])
        accuracy_svm = accuracy_score(y_test, y_pred_log)
-       st.write(f'F1 score for the Log. Regression model applied to the dataset with a test size of {t_size}%: {f1_score_log[0] * 100:.2f}%, {f1_score_log[1] * 100:.2f}%')
-       st.write(f'Accuracy for the Log. Regression model applied to the dataset with a test size of {t_size}%: {accuracy_svm * 100:.2f}%')
+       st.write(f'**F1 score** for the **Log. Regression** model applied to the dataset with a test size of {t_size}%: *{f1_score_log[0] * 100:.2f}*%, *{f1_score_log[1] * 100:.2f}*%')
+       st.write(f'**Accuracy** for the **Log. Regression** model applied to the dataset with a test size of {t_size}%: *{accuracy_svm * 100:.2f}*%')
        y_pred_svm = svm_model.predict(X_test)
        f1_score_svm = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
        accuracy_svm = accuracy_score(y_test, y_pred_svm)
-       st.write(f'F1 score for the SVM model applied to the dataset with a test size of {t_size}%: {f1_score_svm[0] * 100:.2f}%, {f1_score_svm[1] * 100:.2f}%')
-       st.write(f'Accuracy for the SVM model applied to the dataset with a test size of {t_size}%: {accuracy_svm * 100:.2f}%')
+       st.write(f'**F1 score** for the **SVM** model applied to the dataset with a test size of {t_size}%: *{f1_score_svm[0] * 100:.2f}*%, *{f1_score_svm[1] * 100:.2f}*%')
+       st.write(f'**Accuracy** for the **SVM** model applied to the dataset with a test size of {t_size}%: *{accuracy_svm * 100:.2f}*%')
        if t_size == 10:
               col1, col2 = st.columns(2)
               col1.image('images\s_acc\svm-01.png', caption = 'Accuracy score for the SVM model')
