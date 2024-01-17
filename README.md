@@ -37,4 +37,4 @@
        
 My main goal for this project is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
 
-The Water Quality Prediction dataset can be found in [Kaggle](https://www.kaggle.com/datasets/vanthanadevi08/water-quality-prediction) or in the [Github](https://github.com/dariogemo/water_project) repository for this project, where you can also find the full code for this project.
+The Water Quality Prediction dataset can be found in [Kaggle](https://www.kaggle.com/datasets/vanthanadevi08/water-quality-prediction) or in the [Github](https://github.com/dariogemo/water_project) repository for this project, where you can also find the full code.

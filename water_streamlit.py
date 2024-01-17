@@ -2,6 +2,7 @@ import pandas as pd
 import polars as pl
 import streamlit as st 
 import pickle
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, accuracy_score
 
@@ -31,10 +32,10 @@ if box_sections == 'Description':
        
        My main goal for this project is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
        '''
-       st.write('The Water Quality Prediction dataset can be found at:')
+       st.write('The Water Quality Prediction dataset can be found on:')
        st.link_button('Kaggle', 'https://www.kaggle.com/datasets/vanthanadevi08/water-quality-prediction')
        st.write('or in the GitHub repository for this project.')
-       st.write('The full code for this project can be found at ')
+       st.write('The full code for this project can be found on ')
        st.link_button('Github', 'https://github.com/dariogemo/water_project')
 
 if box_sections == 'Exploratory Data Analysis':
@@ -230,7 +231,7 @@ if box_sections == 'Model':
        with open('models\potability_classifier_svm.pkl', 'rb') as file:
               svm_model = pickle.load(file)
        t_size = st.slider('Choose test size', 10, 100, step = 10)
-       df = pl.read_csv('csv\Water_Quality_Prediction_Balanced.csv')
+       df = pl.read_csv('csv\Water_Quality_Prediction_Bal_Scal.csv')
        df = pd.DataFrame(df)
        df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 'Color',
                             'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
@@ -238,6 +239,9 @@ if box_sections == 'Model':
        X = df.drop('Potability', axis = 1)
        y = df['Potability']
        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = t_size, random_state = 1)
+       sc = StandardScaler()
+       X_train = sc.fit_transform(X_train)
+       X_test = sc.fit_transform(X_test)
        with open('models\potability_classifier_log.pkl', 'rb') as file:
               log_model = pickle.load(file)
        y_pred_log = log_model.predict(X_test)
