@@ -8,7 +8,7 @@ My main goal for this project is to build a model that classifies if a given wat
 
 - *images:* all the images that are needed for the streamlit presentation. For computational reasons, I found it better to store the plots inside here instead of re-creating them in the streamlit file.
 
-- *models:* the Logistic Regression and SVM models resulting from this project, stored in .pkl files.
+- *potability_classifier:* the Random Forest Classifier model stored in a .pkl file.
 
 - *clean_df.py:* 
 
@@ -16,7 +16,7 @@ My main goal for this project is to build a model that classifies if a given wat
 
 - *water_project.ipynb:* the notebook used for this project, where is stored almost all the code.
 
-. *water_streamlit.py:* the python file used for the streamlit presentation.
+- *water_streamlit.py:* the python file used for the streamlit presentation.
 
 **Details of the dataset features:**
 

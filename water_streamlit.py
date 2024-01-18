@@ -4,7 +4,7 @@ import streamlit as st
 import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, accuracy_score
+from sklearn.metrics import f1_score, classification_report
 
 st.title('Water Quality Detection Project')
 
@@ -16,7 +16,7 @@ if box_sections == 'Description':
        From the drop-down menu on the top of this page, you can select what part of the project you're interested in.\n
        **Exploratory Data Analysis:** gives insights on the general structure of the dataset, and it's divided between "Before Cleaning" and "After Cleaning".\n
        **Plots:** in here are stored the main plots that can help us have a better understanding of the relations between variables and their relative distributions.\n
-       **Prediction Model:** stored in this page is an interesting visualization of the variables after dimensionality reduction thanks to PCA, and then a slider where you can select the test size for two different ML classification models (Logistic Regression and SVM's) with their relative accuracy scores.\n
+       **Prediction Model:** stored in this page is an interesting visualization of the variables after dimensionality reduction thanks to PCA, and then a slider where you can select the test size for the Random Forest Classifier Model and its relative f1 score.\n
        
        **Details of the dataset variables:**\n
        1) *pH -* Measures how acidic or basic our sample is. More specifically, it indicates the concentration of hydrogen ions in the water. Unintuitively, an high pH means a higher concentration of hydrogen, a low pH means a lower concentratio. Its scale is between 0 and 14, and a neutral pH of 7 means that is neither acidic or basic.\n
@@ -66,6 +66,7 @@ if box_sections == 'Exploratory Data Analysis':
               df.info(buf = buffer)
               s = buffer.getvalue()
               st.text(s)
+
        if st.checkbox('After Cleaning'):
               df = pl.read_csv('csv\Water_Quality_Prediction_Clean.csv')
               df = pd.DataFrame(df)
@@ -233,6 +234,7 @@ if box_sections == 'Plots':
               if box_violinplot_features == 'Total_Diss_Solids':
                      st.image('images\iviolinplot\Total_Diss_Solids.png')
 if box_sections == 'Prediction Model':
+       from sklearn.decomposition import PCA
        '''
        We can first look for clusters that are not evident with our high-dimensional data. We'll use Principal Component Analsisys to reduce the dimensionality of our dataset.\n
        As we can see from the Scree Plot, 2 Principal Components should be enough.
@@ -244,70 +246,39 @@ if box_sections == 'Prediction Model':
        st.image('images\pca.png')
        '''
        ---
+       The model used is RandomForestClassifier, after standardizing our data.
        '''
-       with open('models\potability_classifier_svm.pkl', 'rb') as file:
-              svm_model = pickle.load(file)
        t_size = st.slider('Choose test size', 10, 100, step = 10)
-       df = pl.read_csv('csv\Water_Quality_Prediction_Bal_Scal.csv')
+       
+       from imblearn.under_sampling import RandomUnderSampler
+       df = pl.read_csv('csv\Water_Quality_Prediction_Clean.csv')
        df = pd.DataFrame(df)
        df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 'Color',
                             'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
                             'Chlorine', 'Manganese', 'Total_Diss_Solids', 'Potability']
+       
        X = df.drop('Potability', axis = 1)
        y = df['Potability']
-       X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = t_size, random_state = 1)
+       rus = RandomUnderSampler()
+       X, y = rus.fit_resample(X, y)
        sc = StandardScaler()
-       X_train = sc.fit_transform(X_train)
-       X_test = sc.fit_transform(X_test)
-       with open('models\potability_classifier_log.pkl', 'rb') as file:
-              log_model = pickle.load(file)
-       y_pred_log = log_model.predict(X_test)
-       f1_score_log = f1_score(y_test, y_pred_log, average = None, labels = [0, 1])
-       accuracy_svm = accuracy_score(y_test, y_pred_log)
-       st.write(f'**F1 score** for the **Log. Regression** model applied to the dataset with a test size of {t_size}%: *{f1_score_log[0] * 100:.2f}*%, *{f1_score_log[1] * 100:.2f}*%')
-       st.write(f'**Accuracy** for the **Log. Regression** model applied to the dataset with a test size of {t_size}%: *{accuracy_svm * 100:.2f}*%')
+       X = sc.fit_transform(X)
+       X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = t_size/100, random_state = 1)
+       col1, col2, col3, col4 = st.columns([1, 2, 1, 2.3])
+       col2.write(f'Train size: {X_train.shape[0]}')
+       col4.write(f'Test size: {X_test.shape[0]}')
+
+       with open('models\potability_classifier_svm.pkl', 'rb') as file:
+              svm_model = pickle.load(file)
+  
        y_pred_svm = svm_model.predict(X_test)
        f1_score_svm = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
-       accuracy_svm = accuracy_score(y_test, y_pred_svm)
-       st.write(f'**F1 score** for the **SVM** model applied to the dataset with a test size of {t_size}%: *{f1_score_svm[0] * 100:.2f}*%, *{f1_score_svm[1] * 100:.2f}*%')
-       st.write(f'**Accuracy** for the **SVM** model applied to the dataset with a test size of {t_size}%: *{accuracy_svm * 100:.2f}*%')
-       if t_size == 10:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-01.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-01.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 20:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-02.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-02.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 30:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-03.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-03.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 40:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-04.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-04.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 50:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-05.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-05.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 60:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-06.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-06.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 70:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-07.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-07.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 80:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-08.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-08.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 90:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-09.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-09.png', caption = 'Accuracy score for the Logistic Regression model')
-       if t_size == 100:
-              col1, col2 = st.columns(2)
-              col1.image('images\s_acc\svm-1.png', caption = 'Accuracy score for the SVM model')
-              col2.image('images\s_acc\log-1.png', caption = 'Accuracy score for the Logistic Regression model')
+       st.write(f'**F1 score** for the **SVM** model applied to the dataset with a test size of {t_size}%:')
+       col1, col2, col3, col4 = st.columns([1, 2, 1, 2.3])
+       col2.write(f'**{f1_score_svm[0] * 100:.2f}**%')
+       col4.write(f'**{f1_score_svm[1] * 100:.2f}**%')
+       '''
+       **Classification report**:
+       '''
+       col1, col2, col3 = st.columns([1, 5, 1])
+       col2.text(classification_report(y_test, y_pred_svm))
