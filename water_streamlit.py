@@ -1,3 +1,4 @@
+# import packages
 import pandas as pd
 import polars as pl
 import streamlit as st 
@@ -5,12 +6,13 @@ import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, classification_report
-
+# set the title for all the pages
 st.title('Water Quality Detection Project')
-
+# create a drop-down menu for the 4 pages of the project
 box_sections = st.selectbox('What part of the project would you like to see?', ['Description', 'Exploratory Data Analysis', 'Plots', 'Prediction Model'])
 
 if box_sections == 'Description':
+# general informations about project and dataset
        '''
        My main goal for this project is to build a prediction model, as accurate as possible, that classifies if a given water sample is potable based on the 15 variables provided.\n
        From the drop-down menu on the top of this page, you can select what part of the project you're interested in.\n
@@ -42,11 +44,13 @@ if box_sections == 'Description':
        st.write('or in the GitHub repository for this project.')
        st.write('The full code for this project can be found on ')
        st.link_button('Github', 'https://github.com/dariogemo/water_project')
-
+# EDA part of the project
 if box_sections == 'Exploratory Data Analysis':
        import io
        st.header('Exploratory Data Analysis')
+# create two buttons before and after cleaning to display informations of the dataset
        if st.checkbox('Before Cleaning'):
+# load the before cleaning dataset
               df = pl.read_csv('csv\Water_Quality_Prediction.csv')
               df = pd.DataFrame(df)
               df.columns = ['Index', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Lead', 'Zinc', 'Color',
@@ -54,43 +58,52 @@ if box_sections == 'Exploratory Data Analysis':
                             'Chlorine', 'Manganese', 'Total Dissolved Solids', 'Source',
                             'Water Temperature', 'Air Temperature', 'Month', 'Day', 'Time of Day',
                             'Target']
+# display head and tail of the dataset
               st.write(df.head(5))
               st.write(df.tail(5))
               '''
               **General informations for our water quality dataset:**
               '''
+# display the shape and the null values 
               col1, col2 = st.columns(2)
               col1.write(f'Rows and columns: {df.shape}')
               col2.write(f'Total null values: {df.isnull().sum().sum()}')
+# display pd.info()
               buffer = io.StringIO()
               df.info(buf = buffer)
               s = buffer.getvalue()
               st.text(s)
 
        if st.checkbox('After Cleaning'):
+# load the after cleaning dataset
               df = pl.read_csv('csv\Water_Quality_Prediction_Clean.csv')
               df = pd.DataFrame(df)
               df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 'Color',
                             'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
                             'Chlorine', 'Manganese', 'Total_Diss_Solids', 'Potability']
+# display head and tail of the dataset
               st.write(df.head(5))
               st.write(df.tail(5))
               '''
               **General informations for our water quality dataset, cleaned:**
               '''
+# display the shape and the null values 
+
               col1, col2 = st.columns(2)
               col1.write(f'Rows and columns: {df.shape}')
               col2.write(f'Total null values: {df.isnull().sum().sum()}')
+# display pd.info()
               buffer = io.StringIO()
               df.info(buf = buffer)
               s = buffer.getvalue()
               st.text(s)
-  
+# Plots part of the project
 if box_sections == 'Plots':
        st.header('Main plots')
        '''
        In the dataset we encountered a lot of null values
        '''
+# load the barplot of the null values
        st.image('images\inull_val.png')
        '''
        After cleaning our dataset, we ended up with 0 null values accross all variables.
@@ -98,37 +111,44 @@ if box_sections == 'Plots':
        '''
        The correlation between variables can be seen from the following heatmap:
        '''
+# load the heatmap of the dataset
        st.image('images\heatmap.png')
        '''
        No big correlations between variables, so we'll keep them all.\n 
        It seems that Color and Turbidity have one of the highest correlation with Potability: this was somewhat expected, because even in our daily life we are suspicious of water that isn't transparent or seems turbid. We can better check the relation between Color and Potability.
        '''
+# create a button to display the frequency table between color and potability
        if st.checkbox('Show frequency table of Color and Potability'):
               st.image('images\Color-Potability.png')
        '''
        Another "relevant" correlation might be between Manganese and Turbidity. Potable water usually has very low levels of Manganese and Turbidity levels between 0 and 1.
        '''
+# create a button to display the scatterplot between manganese and turbidity
        if st.checkbox('Show scatterplot between Manganese and Turbidity'):
               st.image('images\Manganese-Turbidity.png')
        '''
        Also, it might be important to check the correlation between Color and Turbidity since in theory they should have some type of relation.
        '''
+# create a button to display the boxplot between color and turbidity
        if st.checkbox('Show boxplot of Color and Turbidity'):
               st.image('images\Color-Turbidity.png')
        '''
        It's important that our cleaning of the dataset didn't impact too much our variables. 
        If that was the case, we might encounter some lower performances in the model part of the project.
        '''
+# create a drop-down menu to select the type of graph
        box_type_graph = st.selectbox('Choose what type of graph you would like to see:', ['None', 'Histogram', 'Boxplot', 'Violinplot'], key = 'graphs')
        if box_type_graph == 'None':
               pass
        if box_type_graph == 'Histogram': 
+# create a drop-down menu to select the variable
               box_distr_features = st.selectbox('Distribution of the variable:', ['None', 'pH', 'Iron', 'Nitrate', 
                                                                              'Chloride', 'Zinc', 'Color', 
                                                                              'Turbidity', 'Fluoride', 'Copper', 'Odor', 
                                                                              'Sulfate', 'Conductivity', 'Chlorine', 
                                                                              'Manganese', 'Total_Diss_Solids'], 
                                                                              label_visibility = 'collapsed', key = 'distr')
+# load the image of the type of graph and variable selected
               if box_distr_features == 'None':
                      st.image('images\distr\iNone.png') 
               if box_distr_features == 'pH':
@@ -162,9 +182,11 @@ if box_sections == 'Plots':
               if box_distr_features == 'Total_Diss_Solids':
                      st.image('images\distr\Total_Diss_Solids.png')
        if box_type_graph == 'Boxplot':
+# create a drop-down menu to select the variable
               box_boxplot_features = st.selectbox('Feature', ['None', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 
                                                         'Color','Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 
                                                         'Conductivity', 'Chlorine', 'Manganese', 'Total_Diss_Solids'], label_visibility = 'collapsed', key = 'boxplot')
+# load the image of the type of graph and variable selected
               if box_boxplot_features == 'None':
                      st.image('images\iboxplot\iNone.png')
               if box_boxplot_features == 'pH':
@@ -198,9 +220,11 @@ if box_sections == 'Plots':
               if box_boxplot_features == 'Total_Diss_Solids':
                      st.image('images\iboxplot\Total_Diss_Solids.png')
        if box_type_graph == 'Violinplot':
+# create a drop-down menu to select the variable
               box_violinplot_features = st.selectbox('Feature violinplot', ['None', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 
                                                         'Color','Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 
                                                         'Conductivity', 'Chlorine', 'Manganese', 'Total_Diss_Solids'], label_visibility = 'collapsed', key = 'violinplot')
+# load the image of the type of graph and variable selected
               if box_violinplot_features == 'None':
                      st.image('images\iviolinplot\iNone.png')
               if box_violinplot_features == 'pH':
@@ -233,52 +257,73 @@ if box_sections == 'Plots':
                      st.image('images\iviolinplot\Manganese.png')
               if box_violinplot_features == 'Total_Diss_Solids':
                      st.image('images\iviolinplot\Total_Diss_Solids.png')
+# Prediction Model part of the project
 if box_sections == 'Prediction Model':
-       from sklearn.decomposition import PCA
        '''
        We can first look for clusters that are not evident with our high-dimensional data. We'll use Principal Component Analsisys to reduce the dimensionality of our dataset.\n
-       As we can see from the Scree Plot, 2 Principal Components should be enough.
+       As we can see from the Scree Plot, 2 Principal Components should be enough since most of the information is passed by in the dimensionality reduction.
        '''
+       # load the scree plot png
        st.image('images\scree.png')
        '''
-       We can now visualize our data thanks to the PCA. Two quite distinct clusters are visible. 
+       We can now visualize our data thanks to the PCA. Two clusters are visible. 
        '''
+       # load the PCA scatterplot png
        st.image('images\pca.png')
        '''
        ---
-       The model used is RandomForestClassifier, after standardizing our data.
+       The model used for predicting the potability of a sample water is RandomForestClassifier with a default number of decision trees equal to 100.
        '''
+       # create a slider to select the size of the dataset and save the resulting integer in a variable
        t_size = st.slider('Choose test size', 10, 100, step = 10)
-       
-       from imblearn.under_sampling import RandomUnderSampler
-       df = pl.read_csv('csv\Water_Quality_Prediction_Clean.csv')
+       # load the cleaned and already resampled dataset
+       df = pl.read_csv('csv\Water_Quality_Prediction_res.csv')
        df = pd.DataFrame(df)
        df.columns = ['pH', 'Iron', 'Nitrate', 'Chloride', 'Zinc', 'Color',
                             'Turbidity', 'Fluoride', 'Copper', 'Odor', 'Sulfate', 'Conductivity',
                             'Chlorine', 'Manganese', 'Total_Diss_Solids', 'Potability']
-       
+       # create X dataset so that it contains all the features
        X = df.drop('Potability', axis = 1)
+       # create y series so that it contains only the potability column
        y = df['Potability']
-       rus = RandomUnderSampler()
-       X, y = rus.fit_resample(X, y)
-       sc = StandardScaler()
-       X = sc.fit_transform(X)
+       # create X and y datasets used for training and testing the model
+       # test_size is the number selected by the user from the above slider
        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = t_size/100, random_state = 1)
+       # create columns to centered information
        col1, col2, col3, col4 = st.columns([1, 2, 1, 2.3])
+       # display how many rows are in train and test dataset
        col2.write(f'Train size: {X_train.shape[0]}')
        col4.write(f'Test size: {X_test.shape[0]}')
-
+       # load the pre-trained model
        with open('models\potability_classifier_svm.pkl', 'rb') as file:
-              svm_model = pickle.load(file)
-  
-       y_pred_svm = svm_model.predict(X_test)
-       f1_score_svm = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
-       st.write(f'**F1 score** for the **SVM** model applied to the dataset with a test size of {t_size}%:')
+              model = pickle.load(file)
+       # use the model to predict the potability of our test dataset
+       y_pred_svm = model.predict(X_test)
+       # evaluate the prediction by using f1 score and classification report       
+       f1 = f1_score(y_test, y_pred_svm, average = None, labels = [0, 1])
+       st.write(f'**F1 score** for the model applied to the dataset with a test size of {t_size}%:')
+       # create columns to center the scores
        col1, col2, col3, col4 = st.columns([1, 2, 1, 2.3])
-       col2.write(f'**{f1_score_svm[0] * 100:.2f}**%')
-       col4.write(f'**{f1_score_svm[1] * 100:.2f}**%')
+       col2.write(f'**{f1[0] * 100:.2f}**%')
+       col4.write(f'**{f1[1] * 100:.2f}**%')
        '''
        **Classification report**:
        '''
+       # create columns to center the classification report
        col1, col2, col3 = st.columns([1, 5, 1])
        col2.text(classification_report(y_test, y_pred_svm))
+       '''
+       **Ten-Fold Cross Validation using KFold**\n
+       We can now cross-validate our model to check for overfitting and then see how this behaviour changes as we increase the number of decision trees.
+       '''
+       n_est = [25, 50, 75, 100, 150, 200]
+       scores = [91.62, 91.62, 91.68, 91.69, 91.72, 91.7]
+       n_est = pd.Series([round(int(x), 0) for x in n_est], name = 'N. Dec. Trees')
+       scores = pd.Series(scores, name = 'Average Accuracy Scores')
+       prova = pd.concat([n_est, scores], axis = 1).T
+       col1, col2, col3 = st.columns([1, 5, 1])
+       col2.write(prova)
+       st.image('images\k_fold.png', caption = 'How the CV mean accuracy score changes as the number of decision trees increases')
+       '''
+       The differences between the scores aren't this relevant, so we might choose for computational reasons to fix the number of decision trees to 75.
+       '''
