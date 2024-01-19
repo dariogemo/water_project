@@ -3,7 +3,6 @@ import pandas as pd
 import polars as pl
 import streamlit as st 
 import pickle
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, classification_report
 # set the title for all the pages
@@ -18,7 +17,7 @@ if box_sections == 'Description':
        From the drop-down menu on the top of this page, you can select what part of the project you're interested in.\n
        **Exploratory Data Analysis:** gives insights on the general structure of the dataset, and it's divided between "Before Cleaning" and "After Cleaning".\n
        **Plots:** in here are stored the main plots that can help us have a better understanding of the relations between variables and their relative distributions.\n
-       **Prediction Model:** stored in this page is an interesting visualization of the variables after dimensionality reduction thanks to PCA, and then a slider where you can select the test size for the Random Forest Classifier Model and its relative f1 score.\n
+       **Prediction Model:** stored in this page is an interesting visualization of the variables after dimensionality reduction thanks to PCA, and then a slider where you can select the test size for the Random Forest Classifier Model and its relative f1 score. Additionally, a Ten-Fold cross validation gives insight on the most convenient number of decision trees to use.\n
        
        **Details of the dataset variables:**\n
        1) *pH -* Measures how acidic or basic our sample is. More specifically, it indicates the concentration of hydrogen ions in the water. Unintuitively, an high pH means a higher concentration of hydrogen, a low pH means a lower concentratio. Its scale is between 0 and 14, and a neutral pH of 7 means that is neither acidic or basic.\n
@@ -68,12 +67,11 @@ if box_sections == 'Exploratory Data Analysis':
               col1, col2 = st.columns(2)
               col1.write(f'Rows and columns: {df.shape}')
               col2.write(f'Total null values: {df.isnull().sum().sum()}')
-# display pd.info()
+# use a string buffer to correctly display pd.info()
               buffer = io.StringIO()
               df.info(buf = buffer)
               s = buffer.getvalue()
               st.text(s)
-
        if st.checkbox('After Cleaning'):
 # load the after cleaning dataset
               df = pl.read_csv('csv\Water_Quality_Prediction_Clean.csv')
@@ -88,11 +86,10 @@ if box_sections == 'Exploratory Data Analysis':
               **General informations for our water quality dataset, cleaned:**
               '''
 # display the shape and the null values 
-
               col1, col2 = st.columns(2)
               col1.write(f'Rows and columns: {df.shape}')
               col2.write(f'Total null values: {df.isnull().sum().sum()}')
-# display pd.info()
+# use a string buffer to correctly display pd.info()
               buffer = io.StringIO()
               df.info(buf = buffer)
               s = buffer.getvalue()
@@ -127,13 +124,13 @@ if box_sections == 'Plots':
        if st.checkbox('Show scatterplot between Manganese and Turbidity'):
               st.image('images\Manganese-Turbidity.png')
        '''
-       Also, it might be important to check the correlation between Color and Turbidity since in theory they should have some type of relation.
+       Also, it might be important to check the correlation between Color and Turbidity since intuitively they should have some type of connection.
        '''
 # create a button to display the boxplot between color and turbidity
        if st.checkbox('Show boxplot of Color and Turbidity'):
               st.image('images\Color-Turbidity.png')
        '''
-       It's important that our cleaning of the dataset didn't impact too much our variables. 
+       It's crucial that our cleaning of the dataset didn't impact too much our variables.\n 
        If that was the case, we might encounter some lower performances in the model part of the project.
        '''
 # create a drop-down menu to select the type of graph
@@ -275,7 +272,7 @@ if box_sections == 'Prediction Model':
        The model used for predicting the potability of a sample water is RandomForestClassifier with a default number of decision trees equal to 100.
        '''
        # create a slider to select the size of the dataset and save the resulting integer in a variable
-       t_size = st.slider('Choose test size', 10, 100, step = 10)
+       t_size = st.slider('Choose test size', 10, 90, step = 10)
        # load the cleaned and already resampled dataset
        df = pl.read_csv('csv\Water_Quality_Prediction_res.csv')
        df = pd.DataFrame(df)
@@ -295,7 +292,7 @@ if box_sections == 'Prediction Model':
        col2.write(f'Train size: {X_train.shape[0]}')
        col4.write(f'Test size: {X_test.shape[0]}')
        # load the pre-trained model
-       with open('models\potability_classifier_svm.pkl', 'rb') as file:
+       with open('models\potability_classifier.pkl', 'rb') as file:
               model = pickle.load(file)
        # use the model to predict the potability of our test dataset
        y_pred_svm = model.predict(X_test)
@@ -316,14 +313,15 @@ if box_sections == 'Prediction Model':
        **Ten-Fold Cross Validation using KFold**\n
        We can now cross-validate our model to check for overfitting and then see how this behaviour changes as we increase the number of decision trees.
        '''
-       n_est = [25, 50, 75, 100, 150, 200]
-       scores = [91.62, 91.62, 91.68, 91.69, 91.72, 91.7]
-       n_est = pd.Series([round(int(x), 0) for x in n_est], name = 'N. Dec. Trees')
+       n_est = [5, 25, 50, 75, 100, 150, 200]
+       scores = [89.99, 91.64, 91.7, 91.7, 91.68, 91.72, 91.73]
+       scores = [str(x)+'%' for x in scores]
+       n_est = pd.Series([round(int(x), 0) for x in n_est], name = 'N. Decision Trees')
        scores = pd.Series(scores, name = 'Average Accuracy Scores')
-       prova = pd.concat([n_est, scores], axis = 1).T
-       col1, col2, col3 = st.columns([1, 5, 1])
-       col2.write(prova)
+       cv_df = pd.concat([n_est, scores], axis = 1).T
+       col1, col2, col3 = st.columns([0.5, 5, 0.5])
+       col2.write(cv_df)
        st.image('images\k_fold.png', caption = 'How the CV mean accuracy score changes as the number of decision trees increases')
        '''
-       The differences between the scores aren't this relevant, so we might choose for computational reasons to fix the number of decision trees to 75.
+       Except the case with 5 decision trees, the differences between the scores aren't really relevant, so we might choose for computational reasons to fix the number of decision trees to 50 or even 75.
        '''
