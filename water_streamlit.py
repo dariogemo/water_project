@@ -314,7 +314,7 @@ if box_sections == 'Prediction Model':
        We can now cross-validate our model to check for overfitting and then see how this behaviour changes as we increase the number of decision trees.
        '''
        n_est = [5, 25, 50, 75, 100, 150, 200]
-       scores = [90.12, 91.69, 91.82, 91.76, 91.78, 91.79, 91.78]
+       scores = [90.24, 91.59, 91.64, 91.64, 91.65, 91.65, 91.64]
        scores = [str(x)+'%' for x in scores]
        n_est = pd.Series([round(int(x), 0) for x in n_est], name = 'N. Decision Trees')
        scores = pd.Series(scores, name = 'Average Accuracy Scores')
