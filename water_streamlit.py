@@ -49,7 +49,7 @@ if box_sections == 'Exploratory Data Analysis':
        st.header('Exploratory Data Analysis')
 # create two buttons before and after cleaning to display informations of the dataset
        if st.checkbox('Before Cleaning'):
-# load the before cleaning dataset
+# load the before cleaning dataset using polars
               df = pl.read_csv('csv\Water_Quality_Prediction.csv')
               df = pd.DataFrame(df)
               df.columns = ['Index', 'pH', 'Iron', 'Nitrate', 'Chloride', 'Lead', 'Zinc', 'Color',
@@ -292,7 +292,7 @@ if box_sections == 'Prediction Model':
        col2.write(f'Train size: {X_train.shape[0]}')
        col4.write(f'Test size: {X_test.shape[0]}')
        # load the pre-trained model
-       with open('models\potability_classifier.pkl', 'rb') as file:
+       with open('model\potability_classifier.pkl', 'rb') as file:
               model = pickle.load(file)
        # use the model to predict the potability of our test dataset
        y_pred_svm = model.predict(X_test)
@@ -314,7 +314,7 @@ if box_sections == 'Prediction Model':
        We can now cross-validate our model to check for overfitting and then see how this behaviour changes as we increase the number of decision trees.
        '''
        n_est = [5, 25, 50, 75, 100, 150, 200]
-       scores = [89.99, 91.64, 91.7, 91.7, 91.68, 91.72, 91.73]
+       scores = [90.12, 91.69, 91.82, 91.76, 91.78, 91.79, 91.78]
        scores = [str(x)+'%' for x in scores]
        n_est = pd.Series([round(int(x), 0) for x in n_est], name = 'N. Decision Trees')
        scores = pd.Series(scores, name = 'Average Accuracy Scores')
@@ -323,5 +323,5 @@ if box_sections == 'Prediction Model':
        col2.write(cv_df)
        st.image('images\k_fold.png', caption = 'How the CV mean accuracy score changes as the number of decision trees increases')
        '''
-       Except the case with 5 decision trees, the differences between the scores aren't really relevant, so we might choose for computational reasons to fix the number of decision trees to 50 or even 75.
+       Except the case with 5 decision trees, the differences between the scores aren't really relevant, so we might choose for computational reasons to fix the number of decision trees to 50.
        '''

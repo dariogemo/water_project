@@ -23,7 +23,7 @@ def outl_del(df : pd.DataFrame,
 def median_col_in_target(df : pd.DataFrame, 
                          column : str):
     '''
-    Function for printing the medians of the values of a given column with Potability = 0 and Potability = 1
+    Function for computing the medians of the values of a given column with Potability = 0 and Potability = 1.
     '''
     x = df[df['Potability'] == 0][column].median()
     y = df[df['Potability'] == 1][column].median()
@@ -54,11 +54,11 @@ def na_to_norm_distr(df: pd.DataFrame,
                      column : str):
     '''
     Fill NA's for a given column with random samples picked from a normal distribution.\n
-    The normal distribution mean and standard deviation are chosen from the ones of the column.
+    The normal distribution mean and standard deviation are set to the ones of the input column.
     '''
     mean_value = df[column].mean()
     std_dev = df[column].std()
-    random_values = np.random.normal(mean_value, std_dev, size=len(df))
+    random_values = np.random.normal(mean_value, std_dev, size = len(df))
     df[column] = df[column].fillna(pd.Series(random_values))
 
     
@@ -73,19 +73,19 @@ def na_to_unif_distr(
     low_unif = df[column].min()
     random_values_unif = np.random.uniform(low_unif, high_unif, size = len(df))
     df[column] = df[column].fillna(pd.Series(random_values_unif))
-    
+
 def k_fold_accuracy(
     X1, 
     y1, 
-    lista : list):
+    lista_inp : list):
     '''
-    Ten-Fold cross validation using KFold and RandomForestClassifier, for a given list of numbers of decision trees. Each number of decision trees in "lista" is applied to the Random Forest Classifier and then the model is cross validated.\n
+    Ten-Fold cross validation using KFold and RandomForestClassifier, for a given list of numbers of decision trees. Each number of decision trees in "lista_inp" is applied to the Random Forest Classifier and then the model is cross validated.\n
     It returns a list of scores containing the means of the accuracy scores for each group and a list of number of decision trees relative to the scores.
     '''
     scores = []
     n_est = []
     X_train, X_test, y_train, y_test = train_test_split(X1, y1, test_size = 0.3, random_state = 1)
-    for x in lista:
+    for x in lista_inp:
         n_est.append(x)
         clf = RandomForestClassifier(n_estimators = x, random_state = 1)
         clf.fit(X_train, y_train)

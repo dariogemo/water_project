@@ -1,22 +1,23 @@
 # Water Potability Prediction
 
-My main goal for this project is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
+The project for my programming course.
+My main goal is to build a model that classifies if a given water sample is potable based on the 15 variables provided.
 
 **Details of the files in the repository:**
 
-- *csv:* all the csv files that are needed for the streamlit presentation, as well as the Water Quality Prediction starting csv file.
+- *csv:* all the csv files that are needed for the streamlit presentation, including the Water Quality Prediction starting csv file.
 
 - *images:* all the images that are needed for the streamlit presentation. For computational reasons, I found it better to store the plots inside here instead of re-creating them in the streamlit file.
 
 - *potability_classifier:* the Random Forest Classifier model stored in a .pkl file.
-
-- *clean_df.py:* 
 
 - *funzioni.py:* all the functions defined for the data cleaning of the dataset.
 
 - *water_project.ipynb:* the notebook used for this project, where is stored almost all the code.
 
 - *water_streamlit.py:* the python file used for the streamlit presentation.
+
+- *requirements.txt:* all the libraries and their versions the notebook depends on.
 
 **Details of the dataset features:**
 
